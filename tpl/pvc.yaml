@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: disk-{{namelower}}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: {{pvc}}
+  resources:
+    requests:
+      storage: {{capacity}}

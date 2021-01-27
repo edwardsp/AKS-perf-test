@@ -1,0 +1,8 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azurediskcsi-std
+provisioner: file.csi.azure.com
+parameters:
+  skuName: Standard_LRS
+  fsType: ext4 

@@ -1,0 +1,33 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: {{namelower}}
+spec:
+  ttlSecondsAfterFinished: 30
+  template:
+    spec:
+      containers:
+      - name: fio
+        image: paulmedwards/fio:1.0
+        command: [ "/usr/local/bin/fio", "--name=write", "--directory=/mnt/azure", "--direct=1", "--size={{size}}", "--bs={{bs}}", "--rw=write", "--numjobs={{njobs}}", "--iodepth={{iodepth}}", "--group_reporting", "--runtime=300", "--loops=10000", "--ramp_time=900", "--output=/mnt/results/{{name}}.out" ]
+        resources:
+          requests:
+            cpu: 15000m
+            memory: 32Gi
+          limits:
+            cpu: 16000m
+            memory: 64Gi
+        volumeMounts:
+        - mountPath: "/mnt/results"
+          name: results
+        - mountPath: "/mnt/azure"
+          name: volume
+      volumes:
+        - name: results
+          persistentVolumeClaim:
+            claimName: results-disk
+        - name: volume
+          persistentVolumeClaim:
+            claimName: disk-{{namelower}}
+      restartPolicy: Never
+  backoffLimit: 4
